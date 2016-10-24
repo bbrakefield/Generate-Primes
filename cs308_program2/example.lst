@@ -1,0 +1,233 @@
+Microsoft (R) Macro Assembler Version 10.00.30319.01	    10/23/16 16:36:37
+example.asm						     Page 1 - 1
+
+
+				; Example assembly language program -- adds two numbers
+				; Author:  R. Detmer
+				; Date:    1/2008
+
+				.586
+				.MODEL FLAT
+
+				INCLUDE io.h            ; header file for input/output
+			      C ; IO.H -- header file for I/O macros (listing suppressed)
+			      C .NOLIST      ; turn off listing
+			      C .LIST        ; begin listing
+			      C 
+
+				.STACK 4096
+
+ 00000000			.DATA
+ 00000000 00000000		number1		DWORD	?
+ 00000004 0000000A		number2		DWORD	10
+ 00000008 45 6E 74 65 72	prompt1		BYTE    "Enter number of primes to generate: ", 0
+	   20 6E 75 6D 62
+	   65 72 20 6F 66
+	   20 70 72 69 6D
+	   65 73 20 74 6F
+	   20 67 65 6E 65
+	   72 61 74 65 3A
+	   20 00
+ 0000002D 4E 75 6D 62 65	errorLbl	BYTE	"Number above 100. Please try again ", 0
+	   72 20 61 62 6F
+	   76 65 20 31 30
+	   30 2E 20 50 6C
+	   65 61 73 65 20
+	   74 72 79 20 61
+	   67 61 69 6E 20
+	   00
+ 00000051  00000014 [		string		BYTE	20 DUP(0)
+	    00
+	   ]
+ 00000065 54 68 65 20 70	primesLbl	BYTE	"The primes are ", 0
+	   72 69 6D 65 73
+	   20 61 72 65 20
+	   00
+ 00000075 20 00			emptyLbl	BYTE	" ",0
+ 00000077  00000014 [		primes		BYTE	20 DUP(?), 0
+	    00
+	   ] 00
+ 0000008C  00002710 [		array		BYTE	10000	DUP(0)
+	    00
+	   ]
+
+ 00000000			.CODE
+ 00000000			_MainProc PROC
+ 00000000			startCheck:
+				    input   prompt1, string, 20     ; read ASCII characters
+				    atod    string					; convert to integer
+ 0000002D  A3 00000000 R	    mov     number1, eax			; store in memory
+ 00000032  83 3D 00000000 R		cmp		number1, 100			; compare number to the limit 100
+	   64
+ 00000039  7F 0B			jg		greaterThan				; if greater than 100 jump to error message
+ 0000003B  83 3D 00000000 R		cmp		number1, 1
+	   01
+ 00000042  7C 02			jl		greaterThan
+ 00000044  EB 1B			jmp		endCheck				; otherwise continue with procedure
+
+				; error procedure
+ 00000046			greaterThan:
+					output	errorLbl, number2				; display error message (i think?)
+ 0000005F  EB 9F			jmp		startCheck					; loop back to start and try again
+
+				; continue 
+ 00000061			endCheck:
+ 00000061  FF 35 00000000 R	    push    number1						; first number to EAX
+ 00000067  E8 0000005E			call	GenPrimes					; GenPrimes(int number1)
+ 0000006C  83 C4 08			add		esp, 8
+
+ 0000006F  B9 00000000			mov ecx, 0							; i = 0
+ 00000074  BA 00000000			mov edx, 0
+ 00000079  C6 00 00			mov BYTE PTR[eax], 0				; ptr = 0
+
+ 0000007C				whileLoop:
+ 0000007C  3B 0D 00000000 R		cmp ecx, number1					; while (i < number)
+ 00000082  7D 40			jge endPrintLoop					; if (i>= number) breakl
+
+ 00000084				printLoop:
+ 00000084					primeCheck:
+ 00000084  80 B9 0000008C R			cmp [array + ecx], 1
+	   01
+ 0000008B  74 02				je  printPrimes
+ 0000008D  EB 31				jmp increment
+					
+ 0000008F				printPrimes:
+					dtoa primes, eax
+					output  emptyLbl, [primes]			; output label and sum
+
+ 000000C0				increment:
+ 000000C0  40				inc eax								; ++ptr
+ 000000C1  41				inc ecx								; ++i
+
+ 000000C2  EB B8			jmp whileLoop
+
+ 000000C4				endPrintLoop:
+
+ 000000C4  B8 00000000		    mov     eax, 0						; exit with return code 0
+ 000000C9  C3			    ret
+ 000000CA			_MainProc ENDP
+				                       
+ 000000CA			GenPrimes PROC
+
+ 000000CA  55			    push	ebp							; save base pointer
+ 000000CB  8B EC		    mov		ebp, esp					; establish stack frame
+
+					; move starting values into counters
+ 000000CD  BB 00000002		    mov     ebx, 2						; move 2 into 1st counter
+ 000000D2  B9 00000002		    mov     ecx, 2						; move 2 into 2nd counter
+
+
+ 000000D7			loop1:
+				    ; outer loop
+ 000000D7  81 FB 00002710	    cmp     ebx, 10000					; number1
+ 000000DD  7D 26		    jge     quit						; if greater than or equal to 10,000 quit the program
+
+ 000000DF				loop2:
+				    ; calculate index product 
+ 000000DF  8B C3		    mov     eax, ebx				    ; move counter 1 into register
+ 000000E1  F7 E1		    mul     ecx						    ; multiply by value in 2nd counter and store in eax
+ 000000E3  3D 00002710		    cmp     eax, 10000				    ; compare product to 10000
+ 000000E8  7F 13		    jg      loop2Done					; jump to label2Done if product is greater than 10,000
+ 000000EA  80 B8 0000008C R	    cmp     [array + eax], 0		    ; comapare the value at the current array index to zero
+	   00
+ 000000F1  75 07		    jnz     increment_index			    ; if it does not equal zero do nothing and jump to increment index
+ 000000F3  C6 80 0000008C R	    mov     [array + eax], 1			; otherwise place 1 in the index because the number is composite
+	   01
+
+ 000000FA			increment_index:
+				    ; counter logic
+ 000000FA  41			    inc     ecx							; increment 2nd counter
+ 000000FB  EB E2		    jmp     loop2						; loop back to beginning of loop
+
+ 000000FD			loop2Done:
+ 000000FD  43			    inc     ebx                         ; increment outer loop
+ 000000FE  BA 00000002		    mov     edx, 2                      ; reset 2nd counter to 2
+ 00000103  EB D2		    jmp     loop1			            ; jump to the begining of first loop
+
+ 00000105			quit:
+ 00000105  8D 05 0000008C R	    lea eax, array						; load effective address of array into eax register
+ 0000010B  5D				pop ebp								; restore EBP
+ 0000010C  C3			    ret			
+ 0000010D			GenPrimes ENDP
+				END 
+Microsoft (R) Macro Assembler Version 10.00.30319.01	    10/23/16 16:36:37
+example.asm						     Symbols 2 - 1
+
+
+
+
+Macros:
+
+                N a m e                 Type
+
+atod . . . . . . . . . . . . . .	Proc
+atow . . . . . . . . . . . . . .	Proc
+dtoa . . . . . . . . . . . . . .	Proc
+input  . . . . . . . . . . . . .	Proc
+output . . . . . . . . . . . . .	Proc
+wtoa . . . . . . . . . . . . . .	Proc
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000279C Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000010D Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+GenPrimes  . . . . . . . . . . .	P Near	 000000CA _TEXT	Length= 00000043 Public
+  loop1  . . . . . . . . . . . .	L Near	 000000D7 _TEXT	
+  loop2  . . . . . . . . . . . .	L Near	 000000DF _TEXT	
+  increment_index  . . . . . . .	L Near	 000000FA _TEXT	
+  loop2Done  . . . . . . . . . .	L Near	 000000FD _TEXT	
+  quit . . . . . . . . . . . . .	L Near	 00000105 _TEXT	
+_MainProc  . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000CA Public
+  startCheck . . . . . . . . . .	L Near	 00000000 _TEXT	
+  greaterThan  . . . . . . . . .	L Near	 00000046 _TEXT	
+  endCheck . . . . . . . . . . .	L Near	 00000061 _TEXT	
+  whileLoop  . . . . . . . . . .	L Near	 0000007C _TEXT	
+  printLoop  . . . . . . . . . .	L Near	 00000084 _TEXT	
+  primeCheck . . . . . . . . . .	L Near	 00000084 _TEXT	
+  printPrimes  . . . . . . . . .	L Near	 0000008F _TEXT	
+  increment  . . . . . . . . . .	L Near	 000000C0 _TEXT	
+  endPrintLoop . . . . . . . . .	L Near	 000000C4 _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000000h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+_getInput  . . . . . . . . . . .	L Near	 00000000 FLAT	External
+_showOutput  . . . . . . . . . .	L Near	 00000000 FLAT	External
+array  . . . . . . . . . . . . .	Byte	 0000008C _DATA	
+atodproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+atowproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+dtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+emptyLbl . . . . . . . . . . . .	Byte	 00000075 _DATA	
+errorLbl . . . . . . . . . . . .	Byte	 0000002D _DATA	
+number1  . . . . . . . . . . . .	DWord	 00000000 _DATA	
+number2  . . . . . . . . . . . .	DWord	 00000004 _DATA	
+primesLbl  . . . . . . . . . . .	Byte	 00000065 _DATA	
+primes . . . . . . . . . . . . .	Byte	 00000077 _DATA	
+prompt1  . . . . . . . . . . . .	Byte	 00000008 _DATA	
+string . . . . . . . . . . . . .	Byte	 00000051 _DATA	
+wtoaproc . . . . . . . . . . . .	L Near	 00000000 FLAT	External
+
+	   0 Warnings
+	   0 Errors
