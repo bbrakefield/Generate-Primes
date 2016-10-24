@@ -9,21 +9,16 @@
 INCLUDELIB MSVCRTD
 INCLUDELIB OLDNAMES
 
-PUBLIC	??_C@_02DKCKIIND@?$CFs?$AA@			; `string'
 PUBLIC	_getInput
 EXTRN	_strcpy:PROC
-EXTRN	__imp__scanf:PROC
-EXTRN	__imp__printf:PROC
+EXTRN	__imp__gets:PROC
+EXTRN	__imp__puts:PROC
 EXTRN	__imp__malloc:PROC
 EXTRN	__RTC_CheckEsp:PROC
 EXTRN	__RTC_Shutdown:PROC
 EXTRN	__RTC_InitBase:PROC
-;	COMDAT ??_C@_02DKCKIIND@?$CFs?$AA@
-; File c:\users\brann\documents\program2\cs308_program2\framework.c
-CONST	SEGMENT
-??_C@_02DKCKIIND@?$CFs?$AA@ DB '%s', 00H		; `string'
-CONST	ENDS
 ;	COMDAT rtc$TMZ
+; File c:\users\brann\documents\program2\cs308_program2\framework.c
 rtc$TMZ	SEGMENT
 __RTC_Shutdown.rtc$TMZ DD FLAT:__RTC_Shutdown
 rtc$TMZ	ENDS
@@ -67,57 +62,56 @@ _getInput PROC						; COMDAT
   0002f	e8 00 00 00 00	 call	 __RTC_CheckEsp
   00034	89 45 f8	 mov	 DWORD PTR _temp$[ebp], eax
 
-; 17   : 	printf(inputPrompt);
+; 17   : 	puts(inputPrompt);
 
   00037	8b f4		 mov	 esi, esp
   00039	8b 45 08	 mov	 eax, DWORD PTR _inputPrompt$[ebp]
   0003c	50		 push	 eax
   0003d	ff 15 00 00 00
-	00		 call	 DWORD PTR __imp__printf
+	00		 call	 DWORD PTR __imp__puts
   00043	83 c4 04	 add	 esp, 4
   00046	3b f4		 cmp	 esi, esp
   00048	e8 00 00 00 00	 call	 __RTC_CheckEsp
 
-; 18   : 	scanf("%s", temp);
+; 18   : 	gets(temp);
 
   0004d	8b f4		 mov	 esi, esp
   0004f	8b 45 f8	 mov	 eax, DWORD PTR _temp$[ebp]
   00052	50		 push	 eax
-  00053	68 00 00 00 00	 push	 OFFSET ??_C@_02DKCKIIND@?$CFs?$AA@
-  00058	ff 15 00 00 00
-	00		 call	 DWORD PTR __imp__scanf
-  0005e	83 c4 08	 add	 esp, 8
-  00061	3b f4		 cmp	 esi, esp
-  00063	e8 00 00 00 00	 call	 __RTC_CheckEsp
+  00053	ff 15 00 00 00
+	00		 call	 DWORD PTR __imp__gets
+  00059	83 c4 04	 add	 esp, 4
+  0005c	3b f4		 cmp	 esi, esp
+  0005e	e8 00 00 00 00	 call	 __RTC_CheckEsp
 
 ; 19   : 	temp[maxChars - 1] = '\0';
 
-  00068	8b 45 f8	 mov	 eax, DWORD PTR _temp$[ebp]
-  0006b	03 45 10	 add	 eax, DWORD PTR _maxChars$[ebp]
-  0006e	c6 40 ff 00	 mov	 BYTE PTR [eax-1], 0
+  00063	8b 45 f8	 mov	 eax, DWORD PTR _temp$[ebp]
+  00066	03 45 10	 add	 eax, DWORD PTR _maxChars$[ebp]
+  00069	c6 40 ff 00	 mov	 BYTE PTR [eax-1], 0
 
 ; 20   : 	strcpy(result, temp);
 
-  00072	8b 45 f8	 mov	 eax, DWORD PTR _temp$[ebp]
-  00075	50		 push	 eax
-  00076	8b 4d 0c	 mov	 ecx, DWORD PTR _result$[ebp]
-  00079	51		 push	 ecx
-  0007a	e8 00 00 00 00	 call	 _strcpy
-  0007f	83 c4 08	 add	 esp, 8
+  0006d	8b 45 f8	 mov	 eax, DWORD PTR _temp$[ebp]
+  00070	50		 push	 eax
+  00071	8b 4d 0c	 mov	 ecx, DWORD PTR _result$[ebp]
+  00074	51		 push	 ecx
+  00075	e8 00 00 00 00	 call	 _strcpy
+  0007a	83 c4 08	 add	 esp, 8
 
 ; 21   : 	return;
 ; 22   : }
 
-  00082	5f		 pop	 edi
-  00083	5e		 pop	 esi
-  00084	5b		 pop	 ebx
-  00085	81 c4 cc 00 00
+  0007d	5f		 pop	 edi
+  0007e	5e		 pop	 esi
+  0007f	5b		 pop	 ebx
+  00080	81 c4 cc 00 00
 	00		 add	 esp, 204		; 000000ccH
-  0008b	3b ec		 cmp	 ebp, esp
-  0008d	e8 00 00 00 00	 call	 __RTC_CheckEsp
-  00092	8b e5		 mov	 esp, ebp
-  00094	5d		 pop	 ebp
-  00095	c3		 ret	 0
+  00086	3b ec		 cmp	 ebp, esp
+  00088	e8 00 00 00 00	 call	 __RTC_CheckEsp
+  0008d	8b e5		 mov	 esp, ebp
+  0008f	5d		 pop	 ebp
+  00090	c3		 ret	 0
 _getInput ENDP
 _TEXT	ENDS
 PUBLIC	_showOutput
@@ -143,24 +137,24 @@ _showOutput PROC					; COMDAT
   00017	b8 cc cc cc cc	 mov	 eax, -858993460		; ccccccccH
   0001c	f3 ab		 rep stosd
 
-; 28   : 	printf(outputLabel);
+; 28   : 	puts(outputLabel);
 
   0001e	8b f4		 mov	 esi, esp
   00020	8b 45 08	 mov	 eax, DWORD PTR _outputLabel$[ebp]
   00023	50		 push	 eax
   00024	ff 15 00 00 00
-	00		 call	 DWORD PTR __imp__printf
+	00		 call	 DWORD PTR __imp__puts
   0002a	83 c4 04	 add	 esp, 4
   0002d	3b f4		 cmp	 esi, esp
   0002f	e8 00 00 00 00	 call	 __RTC_CheckEsp
 
-; 29   : 	printf(outputString);
+; 29   : 	puts(outputString);
 
   00034	8b f4		 mov	 esi, esp
   00036	8b 45 0c	 mov	 eax, DWORD PTR _outputString$[ebp]
   00039	50		 push	 eax
   0003a	ff 15 00 00 00
-	00		 call	 DWORD PTR __imp__printf
+	00		 call	 DWORD PTR __imp__puts
   00040	83 c4 04	 add	 esp, 4
   00043	3b f4		 cmp	 esi, esp
   00045	e8 00 00 00 00	 call	 __RTC_CheckEsp
@@ -185,6 +179,7 @@ PUBLIC	??_C@_02GMLFBBN@wb?$AA@				; `string'
 PUBLIC	??_C@_06GDENEHCP@CONIN$?$AA@			; `string'
 PUBLIC	??_C@_02JDPG@rb?$AA@				; `string'
 PUBLIC	_WinMain@16
+EXTRN	__imp__getchar:PROC
 EXTRN	_MainProc:PROC
 EXTRN	__imp__freopen:PROC
 EXTRN	__imp____iob_func:PROC
@@ -208,6 +203,7 @@ CONST	SEGMENT
 CONST	ENDS
 ;	COMDAT _WinMain@16
 _TEXT	SEGMENT
+_r$ = -8						; size = 4
 _hInstance$ = 8						; size = 4
 _hPrevInstance$ = 12					; size = 4
 _lpCmdLine$ = 16					; size = 4
@@ -218,77 +214,91 @@ _WinMain@16 PROC					; COMDAT
 
   00000	55		 push	 ebp
   00001	8b ec		 mov	 ebp, esp
-  00003	81 ec c0 00 00
-	00		 sub	 esp, 192		; 000000c0H
+  00003	81 ec cc 00 00
+	00		 sub	 esp, 204		; 000000ccH
   00009	53		 push	 ebx
   0000a	56		 push	 esi
   0000b	57		 push	 edi
-  0000c	8d bd 40 ff ff
-	ff		 lea	 edi, DWORD PTR [ebp-192]
-  00012	b9 30 00 00 00	 mov	 ecx, 48			; 00000030H
+  0000c	8d bd 34 ff ff
+	ff		 lea	 edi, DWORD PTR [ebp-204]
+  00012	b9 33 00 00 00	 mov	 ecx, 51			; 00000033H
   00017	b8 cc cc cc cc	 mov	 eax, -858993460		; ccccccccH
   0001c	f3 ab		 rep stosd
 
-; 39   : 	AllocConsole();
+; 39   : 	int r = 0;
 
-  0001e	8b f4		 mov	 esi, esp
-  00020	ff 15 00 00 00
+  0001e	c7 45 f8 00 00
+	00 00		 mov	 DWORD PTR _r$[ebp], 0
+
+; 40   : 	AllocConsole();
+
+  00025	8b f4		 mov	 esi, esp
+  00027	ff 15 00 00 00
 	00		 call	 DWORD PTR __imp__AllocConsole@0
-  00026	3b f4		 cmp	 esi, esp
-  00028	e8 00 00 00 00	 call	 __RTC_CheckEsp
+  0002d	3b f4		 cmp	 esi, esp
+  0002f	e8 00 00 00 00	 call	 __RTC_CheckEsp
 
-; 40   : 	freopen("CONIN$" , "rb", stdin);
+; 41   : 	freopen("CONIN$" , "rb", stdin);
 
-  0002d	8b f4		 mov	 esi, esp
-  0002f	ff 15 00 00 00
+  00034	8b f4		 mov	 esi, esp
+  00036	ff 15 00 00 00
 	00		 call	 DWORD PTR __imp____iob_func
-  00035	3b f4		 cmp	 esi, esp
-  00037	e8 00 00 00 00	 call	 __RTC_CheckEsp
-  0003c	8b f4		 mov	 esi, esp
-  0003e	50		 push	 eax
-  0003f	68 00 00 00 00	 push	 OFFSET ??_C@_02JDPG@rb?$AA@
-  00044	68 00 00 00 00	 push	 OFFSET ??_C@_06GDENEHCP@CONIN$?$AA@
-  00049	ff 15 00 00 00
+  0003c	3b f4		 cmp	 esi, esp
+  0003e	e8 00 00 00 00	 call	 __RTC_CheckEsp
+  00043	8b f4		 mov	 esi, esp
+  00045	50		 push	 eax
+  00046	68 00 00 00 00	 push	 OFFSET ??_C@_02JDPG@rb?$AA@
+  0004b	68 00 00 00 00	 push	 OFFSET ??_C@_06GDENEHCP@CONIN$?$AA@
+  00050	ff 15 00 00 00
 	00		 call	 DWORD PTR __imp__freopen
-  0004f	83 c4 0c	 add	 esp, 12			; 0000000cH
-  00052	3b f4		 cmp	 esi, esp
-  00054	e8 00 00 00 00	 call	 __RTC_CheckEsp
+  00056	83 c4 0c	 add	 esp, 12			; 0000000cH
+  00059	3b f4		 cmp	 esi, esp
+  0005b	e8 00 00 00 00	 call	 __RTC_CheckEsp
 
-; 41   : 	freopen("CONOUT$" , "wb", stdout);
+; 42   : 	freopen("CONOUT$" , "wb", stdout);
 
-  00059	8b f4		 mov	 esi, esp
-  0005b	ff 15 00 00 00
+  00060	8b f4		 mov	 esi, esp
+  00062	ff 15 00 00 00
 	00		 call	 DWORD PTR __imp____iob_func
-  00061	3b f4		 cmp	 esi, esp
-  00063	e8 00 00 00 00	 call	 __RTC_CheckEsp
-  00068	83 c0 20	 add	 eax, 32			; 00000020H
-  0006b	8b f4		 mov	 esi, esp
-  0006d	50		 push	 eax
-  0006e	68 00 00 00 00	 push	 OFFSET ??_C@_02GMLFBBN@wb?$AA@
-  00073	68 00 00 00 00	 push	 OFFSET ??_C@_07GPDNMNG@CONOUT$?$AA@
-  00078	ff 15 00 00 00
+  00068	3b f4		 cmp	 esi, esp
+  0006a	e8 00 00 00 00	 call	 __RTC_CheckEsp
+  0006f	83 c0 20	 add	 eax, 32			; 00000020H
+  00072	8b f4		 mov	 esi, esp
+  00074	50		 push	 eax
+  00075	68 00 00 00 00	 push	 OFFSET ??_C@_02GMLFBBN@wb?$AA@
+  0007a	68 00 00 00 00	 push	 OFFSET ??_C@_07GPDNMNG@CONOUT$?$AA@
+  0007f	ff 15 00 00 00
 	00		 call	 DWORD PTR __imp__freopen
-  0007e	83 c4 0c	 add	 esp, 12			; 0000000cH
-  00081	3b f4		 cmp	 esi, esp
-  00083	e8 00 00 00 00	 call	 __RTC_CheckEsp
+  00085	83 c4 0c	 add	 esp, 12			; 0000000cH
+  00088	3b f4		 cmp	 esi, esp
+  0008a	e8 00 00 00 00	 call	 __RTC_CheckEsp
 
-; 42   : 
-; 43   : 	return MainProc();
+; 43   : 
+; 44   : 	r = MainProc();
 
-  00088	e8 00 00 00 00	 call	 _MainProc
+  0008f	e8 00 00 00 00	 call	 _MainProc
+  00094	89 45 f8	 mov	 DWORD PTR _r$[ebp], eax
 
-; 44   : }
+; 45   : 	getchar();
 
-  0008d	5f		 pop	 edi
-  0008e	5e		 pop	 esi
-  0008f	5b		 pop	 ebx
-  00090	81 c4 c0 00 00
-	00		 add	 esp, 192		; 000000c0H
-  00096	3b ec		 cmp	 ebp, esp
-  00098	e8 00 00 00 00	 call	 __RTC_CheckEsp
-  0009d	8b e5		 mov	 esp, ebp
-  0009f	5d		 pop	 ebp
-  000a0	c2 10 00	 ret	 16			; 00000010H
+  00097	8b f4		 mov	 esi, esp
+  00099	ff 15 00 00 00
+	00		 call	 DWORD PTR __imp__getchar
+  0009f	3b f4		 cmp	 esi, esp
+  000a1	e8 00 00 00 00	 call	 __RTC_CheckEsp
+
+; 46   : }
+
+  000a6	5f		 pop	 edi
+  000a7	5e		 pop	 esi
+  000a8	5b		 pop	 ebx
+  000a9	81 c4 cc 00 00
+	00		 add	 esp, 204		; 000000ccH
+  000af	3b ec		 cmp	 ebp, esp
+  000b1	e8 00 00 00 00	 call	 __RTC_CheckEsp
+  000b6	8b e5		 mov	 esp, ebp
+  000b8	5d		 pop	 ebp
+  000b9	c2 10 00	 ret	 16			; 00000010H
 _WinMain@16 ENDP
 _TEXT	ENDS
 END

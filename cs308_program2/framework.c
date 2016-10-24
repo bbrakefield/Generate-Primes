@@ -14,8 +14,8 @@ void getInput(char* inputPrompt, char* result, int maxChars)
 // returned in result
 {
 	char *temp = (char *) malloc(maxChars * sizeof(char));
-	printf(inputPrompt);
-	scanf("%s", temp);
+	puts(inputPrompt);
+	gets(temp);
 	temp[maxChars - 1] = '\0';
 	strcpy(result, temp);
 	return;
@@ -25,8 +25,8 @@ void showOutput(char* outputLabel, char* outputString)
 // display a message box with outputLabel in the title bar
 // and outputString in the main area
 {
-	printf(outputLabel);
-	printf(outputString);
+	puts(outputLabel);
+	puts(outputString);
 	return;
 }
 
@@ -36,11 +36,13 @@ int MainProc(void);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine, int nCmdShow)
 {
+	int r = 0;
 	AllocConsole();
 	freopen("CONIN$" , "rb", stdin);
 	freopen("CONOUT$" , "wb", stdout);
 
-	return MainProc();
+	r = MainProc();
+	getchar();
 }
 
 

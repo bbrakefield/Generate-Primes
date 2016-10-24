@@ -1,4 +1,4 @@
-﻿Build started 10/23/2016 4:36:37 PM.
+﻿Build started 10/24/2016 5:45:18 PM.
      1>Project "C:\Users\brann\Documents\program2\cs308_program2\cs308_program2.vcxproj" on node 2 (rebuild target(s)).
      1>_PrepareForClean:
          Deleting file "Debug\cs308_program2.lastbuildstate".
@@ -6,11 +6,11 @@
          Creating "Debug\cs308_program2.unsuccessfulbuild" because "AlwaysCreate" was specified.
        _MASM:
          Assembling [Inputs]...
-         cmd.exe /C "C:\Users\brann\AppData\Local\Temp\tmpc9c644e8c739468da36481b720a5364d.cmd"
+         cmd.exe /C "C:\Users\brann\AppData\Local\Temp\tmp3f32feb82df24b1b8571050c3d8dd569.cmd"
          ml.exe /c /nologo /Zi /Fo"Debug\example.obj" /W3 /errorReport:prompt /Fl /Taexample.asm
        _MASM:
          Assembling [Inputs]...
-         cmd.exe /C "C:\Users\brann\AppData\Local\Temp\tmp7717552da01a4b1a83b3997b5070cb61.cmd"
+         cmd.exe /C "C:\Users\brann\AppData\Local\Temp\tmpe364644dd5bd4362a6da100d09267c13.cmd"
          ml.exe /c /nologo /Zi /Fo"Debug\io.obj" /W3 /errorReport:prompt /Fl /Taio.asm
        ClCompile:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /FAcs /Fa"Debug\\" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TC /showIncludes /analyze- /errorReport:prompt framework.c
@@ -189,4 +189,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.45
+Time Elapsed 00:00:02.78
